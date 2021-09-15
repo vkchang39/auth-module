@@ -7,6 +7,7 @@ import { connectDb } from "./db.js";
 import { registerUser } from "./accounts/register.js";
 import { authorizeUser } from "./accounts/authorize.js";
 import fastifyCookie from "fastify-cookie";
+import { logUserIn } from "./accounts/logUserIn.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,7 +35,13 @@ const startApp = async () => {
 
 		app.post("/api/authorize", async (req, res) => {
 			try {
-				const User = await authorizeUser(req.body.email, req.body.password);
+				const { isAuthorized, userId } = await authorizeUser(
+					req.body.email,
+					req.body.password
+				);
+				if (isAuthorized) {
+					await logUserIn(userId, req, res);
+				}
 				res
 					.setCookie("test", "test value", {
 						path: "/",
