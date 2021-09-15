@@ -41,16 +41,10 @@ const startApp = async () => {
 				);
 				if (isAuthorized) {
 					await logUserIn(userId, req, res);
-				}
-				res
-					.setCookie("test", "test value", {
-						path: "/",
-						domain: "localhost",
-						httpOnly: true,
-					})
-					.send({
+					res.send({
 						success: true,
 					});
+				}
 			} catch (e) {
 				console.error(e);
 			}
