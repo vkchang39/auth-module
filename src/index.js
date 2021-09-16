@@ -8,6 +8,7 @@ import { registerUser } from "./accounts/register.js";
 import { authorizeUser } from "./accounts/authorize.js";
 import fastifyCookie from "fastify-cookie";
 import { logUserIn } from "./accounts/logUserIn.js";
+import { getUserFromCookie } from "./accounts/user.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -43,6 +44,27 @@ const startApp = async () => {
 					await logUserIn(userId, req, res);
 					res.send({
 						success: true,
+					});
+				}
+			} catch (e) {
+				console.error(e);
+			}
+		});
+
+		app.get("/test", {}, async (req, res) => {
+			try {
+				const user = await getUserFromCookie(req);
+
+				//return user email if exists or send unauthorized
+				if (user?._id) {
+					res.send({
+						success: true,
+						data: user,
+					});
+				} else {
+					res.send({
+						success: false,
+						data: "user lookup failed",
 					});
 				}
 			} catch (e) {
